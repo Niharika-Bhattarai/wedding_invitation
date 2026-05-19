@@ -151,7 +151,7 @@
   .content {
     position: absolute; inset: 0;
     z-index: 6;
-    padding: 90px 50px 30px;
+    padding: 75px 50px 24px;
     display: flex; flex-direction: column;
     gap: 0;
   }
@@ -358,6 +358,58 @@
     gap: 18px;
   }
 
+  /* Bottom 3-column row: blessing | दर्शनाभिलाषी | प्रार्थी
+     (couple image is now a background layer behind the canvas) */
+  .bottom-grid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 24px;
+    align-items: start;
+    padding-bottom: 50px; /* breathing room so short phones don't crop */
+    position: relative;
+    z-index: 6;
+  }
+  .bottom-grid .cell-blessing { grid-column: 1; }
+  .bottom-grid .cell-darshan  { grid-column: 2; justify-self: center; text-align: center; }
+  .bottom-grid .cell-prathi   { grid-column: 3; justify-self: end; }
+
+  /* Neutralise flex sizing on .b6 / .b7 when they sit inside grid cells */
+  .bottom-grid .b6,
+  .bottom-grid .b7 {
+    flex: none;
+    max-width: none;
+    min-width: 0;
+  }
+  .bottom-grid .b6 .hdr,
+  .bottom-grid .b7 .hdr { margin-bottom: 6px; }
+  .bottom-grid .blessing { max-width: 100%; }
+  .bottom-grid .blessing .verse { font-size: 24px; text-align: left; }
+  .bottom-grid .b6 .hdr { font-size: 30px; }
+  .bottom-grid .b6 .row { font-size: 22px; }
+  .bottom-grid .b7 { text-align: right; }
+  .bottom-grid .b7 .hdr { font-size: 32px !important; text-align: right !important; }
+  .bottom-grid .b7 .name { font-size: 28px !important; text-align: right !important; }
+
+  /* Couple image as a soft, faded background centerpiece */
+  .couple-bg {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 380px;
+    height: auto;
+    max-height: 720px;
+    opacity: 0;
+    z-index: 2;          /* behind .content (z=6), above mandala (z=2) */
+    pointer-events: none;
+    object-fit: contain;
+    object-position: bottom center;
+    filter: drop-shadow(0 0 30px rgba(0,0,0,0.4));
+    transition: opacity 1.6s ease-out;
+  }
+  .couple-bg.fade { opacity: 0.5; }
+
   /* Block 6: family well-wishers (left) */
   .b6 {
     flex: 1 1 0;
@@ -558,6 +610,9 @@
     <!-- Main mandala bottom-right -->
     <div class="mandala" id="mandala"></div>
 
+    <!-- Couple silhouette as faded background centerpiece -->
+    <img class="couple-bg" id="coupleBg" src="couple.png" alt="">
+
     <!-- Corner filigree (top corners under the border) -->
     <svg class="corner tl" viewBox="0 0 240 240" id="cornerTL"></svg>
     <svg class="corner tr" viewBox="0 0 240 240" id="cornerTR"></svg>
@@ -697,31 +752,35 @@
         <span class="line"></span>
       </div>
 
-      <!-- Bottom row: blessing | inviter | silhouette -->
-      <div class="bottom-row">
-        <div class="blessing block" style="animation-delay: 7.8s" data-fade>
-          <div class="verse-deco">
-            <span class="l"></span>
-            <span class="d"></span>
-          </div>
-          <div class="verse">
-            पाणिग्रहण-सम्बन्धोऽयं<br>
-            जन्म-जन्मान्तरेऽपि च ।
-          </div>
-          <div class="trans">
-            "May this sacred bond of union endure<br>
-            through this life and lives beyond."
+      <!-- Bottom 3-column row: blessing | दर्शनाभिलाषी | प्रार्थी -->
+      <div class="bottom-grid">
+        <div class="cell-blessing">
+          <div class="blessing block" style="animation-delay: 7.8s" data-fade>
+            <div class="verse-deco">
+              <span class="l"></span>
+              <span class="d"></span>
+            </div>
+            <div class="verse">
+              पाणिग्रहण-सम्बन्धोऽयं<br>
+              जन्म-जन्मान्तरेऽपि च ।
+            </div>
           </div>
         </div>
 
-        <div class="b7 block" style="animation-delay:9.0s" data-fade>
-          <div class="hdr" style="text-align: left; font-size: 38px">प्रार्थी:</div>
-          <div class="name" style="text-align: left; font-size: 34px">श्री लक्ष्मी प्रसाद भट्टराई</div>
-          <div class="name" style="text-align: left; font-size: 34px">श्रीमती झल्का देवी भट्टराई</div>
-          <div class="name" style="text-align: left; font-size: 28px; font-style: italic; margin-top: 6px;">(एवं समस्त भट्टराई परिवार)</div>
+        <div class="cell-darshan">
+          <div class="b6 block" style="animation-delay: 8.4s" data-fade>
+            <div class="hdr">दर्शनाभिलाषी:</div>
+            <div class="row" style="font-style: italic;">समस्त भट्टराई परिवार</div>
+          </div>
         </div>
 
-        <img class="couple block" src="couple.png" alt="Bride and Groom" style="animation-delay: 8.4s; opacity: 0; object-fit: fill; width: 220px" data-fade>
+        <div class="cell-prathi">
+          <div class="b7 block" style="animation-delay:9.0s" data-fade>
+            <div class="hdr">प्रार्थी:</div>
+            <div class="name">श्री लक्ष्मी प्रसाद भट्टराई</div>
+            <div class="name">श्रीमती झल्का देवी भट्टराई</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -840,6 +899,13 @@
       void el.offsetWidth;
       el.classList.add('fade');
     });
+    // Fade in the background couple image
+    const coupleBg = document.getElementById('coupleBg');
+    if (coupleBg) {
+      coupleBg.classList.remove('fade');
+      void coupleBg.offsetWidth;
+      setTimeout(() => coupleBg.classList.add('fade'), 5000);
+    }
     triggerShimmer();
   }
   start();
@@ -852,8 +918,10 @@
     document.querySelectorAll('.shimmer').forEach(el => {
       el.classList.remove('shimmer-go');
     });
+    const coupleBg = document.getElementById('coupleBg');
+    if (coupleBg) coupleBg.classList.remove('fade');
     requestAnimationFrame(() => requestAnimationFrame(start));
   });
-</script>1:50 AM 5/19/2026
+</script>
 </body>
 </html>
