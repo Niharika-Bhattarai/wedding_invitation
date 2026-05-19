@@ -41,6 +41,105 @@
     overflow: hidden;
   }
 
+  /* ============================================================
+     Mobile: drop the fixed 1080x1920 canvas, let content flow.
+     Triggers below 760px (covers all phones in portrait).
+     ============================================================ */
+  @media (max-width: 760px) {
+    html, body {
+      overflow-y: auto;
+      overflow-x: hidden;
+      min-height: 100vh;
+      min-height: 100svh;
+    }
+    .stage {
+      position: relative;
+      inset: auto;
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100svh;
+      overflow: visible;
+    }
+    .canvas {
+      position: relative;
+      left: auto; top: auto;
+      transform: none !important;
+      width: 100%;
+      height: auto;
+      min-height: 100vh;
+      min-height: 100svh;
+      padding-bottom: 40px;
+    }
+    .content {
+      position: relative;
+      inset: auto;
+      padding: 70px 22px 30px;
+      min-height: 100vh;
+      min-height: 100svh;
+    }
+    /* Disable horizontal pan on top border (causes overflow on narrow screens) */
+    .topborder { left: 0; right: 0; height: 70px; }
+    .topborder svg { width: 100%; height: 70px; animation: none; }
+    /* Shrink corner filigree */
+    .corner { width: 110px; height: 110px; top: 70px; }
+    .corner.tl { left: 8px; }
+    .corner.tr { right: 8px; }
+    /* Ghost mandala — keep but contained */
+    .ghost {
+      width: 120vw; height: 120vw;
+      top: 30%;
+    }
+    /* Main mandala — relocate so it doesn't crop the corner */
+    .mandala {
+      width: 120vw; height: 120vw;
+      right: -30vw; bottom: -30vw;
+    }
+    /* Block 1 (mantras) */
+    .b1 .ganesh, .b1 .mantra { font-size: 18px !important; }
+    .b1 .om-row .om-svg { width: 44px; height: 44px; }
+    .b1 .om-row .om-line { width: 70px; }
+    /* Block 2 (title) */
+    .b2 .title { font-size: 60px; letter-spacing: 3px; }
+    .b2 .swash .line { width: 50px; }
+    .b2 .swash .paisley { width: 32px; height: 32px; }
+    .b2 .swash .lotus { width: 42px; height: 24px; }
+    /* Block 3 (couple names) */
+    .b3 { flex-direction: column; gap: 8px; white-space: normal; }
+    .b3 .name { font-size: 36px !important; }
+    .b3 .ganesh-icon { width: 56px; height: 56px; }
+    /* Block 4 (invitation body) */
+    .b4 { font-size: 18px; padding: 0 6px; }
+    .b4 .role, .b4 .person { font-size: 20px !important; }
+    .b4 .sub { font-size: 16px !important; }
+    .b4 .body { font-size: 19px !important; line-height: 1.45; }
+    /* Block 5 (event details) */
+    .b5 h3 { font-size: 30px; }
+    .b5 .lbl { font-size: 22px !important; }
+    .b5 .val { font-size: 19px !important; }
+    .b5 .place { font-size: 17px !important; }
+    .b5 .contact .lbl, .b5 .contact .val { font-size: 19px !important; }
+    .countdown { padding: 8px 16px; }
+    .countdown .days { font-size: 28px; }
+    .countdown .label { font-size: 15px; }
+    /* Bottom row: stack vertically */
+    .bottom-row {
+      flex-direction: column;
+      align-items: center;
+      gap: 26px;
+      margin-top: 18px;
+    }
+    .blessing { text-align: center; max-width: 100%; }
+    .blessing .verse { font-size: 19px; }
+    .blessing .trans { font-size: 15px; }
+    .blessing .verse-deco { justify-content: center; }
+    .b7 { min-width: 0; text-align: center; }
+    .b7 .hdr { text-align: center !important; font-size: 24px !important; }
+    .b7 .name { text-align: center !important; font-size: 21px !important; }
+    .couple { width: 160px !important; height: 270px; }
+    /* Replay button positioning */
+    .replay { right: 10px; bottom: 10px; font-size: 11px; }
+  }
+
   /* Fixed 1080x1920 design surface */
   .canvas {
     width: 1080px; height: 1920px;
@@ -734,10 +833,17 @@
 <script src="mandala.js"></script>
 <script>
   /* ============================================================
-     Fit 1080x1920 canvas to viewport
+     Fit 1080x1920 canvas to viewport (desktop / tablet only).
+     On mobile (<= 760px) the CSS media query takes over and the
+     canvas flows naturally, so we skip the transform entirely.
      ============================================================ */
+  const MOBILE_BREAKPOINT = 760;
   function fit() {
     const c = document.getElementById('canvas');
+    if (window.innerWidth <= MOBILE_BREAKPOINT) {
+      c.style.transform = '';
+      return;
+    }
     const sx = window.innerWidth  / 1080;
     const sy = window.innerHeight / 1920;
     const s  = Math.min(sx, sy);
