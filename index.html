@@ -1,0 +1,845 @@
+<!doctype html>
+<html lang="ne">
+<head>
+<meta charset="utf-8">
+<title>शुभ विवाह — Sujan & Niharika</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Yatra+One&family=Eczar:wght@400;500;600;700&family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* kaleji = deep liver red */
+    --bg-deepest: #15040a;
+    --bg-deep:    #2a0710;
+    --bg-mid:     #4a0f1c;
+    --bg-warm:    #6b1828;
+
+    --gold:        #d4af37;
+    --gold-soft:   #c89a3a;
+    --gold-bright: #f0cf6e;
+    --gold-deep:   #8a6018;
+
+    --cream:  #fff4dc;
+    --paper:  #f6e6c4;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #000;
+    overflow: hidden;
+    font-family: 'Tiro Devanagari Sanskrit', 'Eczar', serif;
+    color: var(--cream);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+
+  .stage {
+    position: fixed; inset: 0;
+    background: #000;
+    overflow: hidden;
+  }
+
+  /* Fixed 1080x1920 design surface */
+  .canvas {
+    width: 1080px; height: 1920px;
+    position: absolute;
+    left: 50%; top: 50%;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 38%,
+        rgba(140,30,50,0.55) 0%,
+        rgba(70,15,28,0.20) 45%,
+        transparent 75%),
+      radial-gradient(ellipse 90% 70% at 80% 95%,
+        rgba(90,18,32,0.55) 0%,
+        rgba(50,10,20,0) 65%),
+      linear-gradient(170deg,
+        var(--bg-mid)   0%,
+        var(--bg-deep)  45%,
+        var(--bg-deepest) 100%);
+  }
+
+  /* subtle grain */
+  .grain {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    opacity: 0.18;
+    mix-blend-mode: overlay;
+    background-image:
+      radial-gradient(circle at 12% 22%, rgba(255,230,180,0.10) 0, transparent 2px),
+      radial-gradient(circle at 78% 64%, rgba(255,230,180,0.08) 0, transparent 1.5px),
+      radial-gradient(circle at 44% 88%, rgba(0,0,0,0.30) 0, transparent 2px),
+      radial-gradient(circle at 65% 14%, rgba(0,0,0,0.25) 0, transparent 2px);
+    background-size: 220px 220px, 180px 180px, 240px 240px, 200px 200px;
+  }
+
+  /* inner vignette */
+  .vignette {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 80% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%);
+  }
+
+  /* top border strip */
+  .topborder {
+    position: absolute;
+    top: 0; left: -120px; right: -120px;
+    height: 120px;
+    overflow: hidden;
+    z-index: 5;
+  }
+  .topborder svg {
+    position: absolute; top: 0; left: 0;
+    height: 120px;
+    width: 4800px;
+    animation: panBorder 26s linear infinite;
+  }
+  @keyframes panBorder {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-1200px); }
+  }
+
+  /* ghost mandala in center-back */
+  .ghost {
+    position: absolute;
+    width: 1300px; height: 1300px;
+    left: 50%; top: 38%;
+    transform: translate(-50%, -50%);
+    opacity: 0.10;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .ghost svg { width:100%; height:100%; animation: spinSlow 220s linear infinite; }
+
+  /* main mandala bottom right */
+  .mandala {
+    position: absolute;
+    width: 1500px; height: 1500px;
+    right: -380px; bottom: -380px;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    animation: mandalaIn 2.4s cubic-bezier(.2,.7,.2,1) 0.2s forwards;
+  }
+  @keyframes mandalaIn {
+    from { opacity: 0; transform: scale(0.92) rotate(-6deg); }
+    to   { opacity: 1; transform: scale(1)    rotate(0deg); }
+  }
+  .mandala .lyr { transform-origin: 50% 50%; }
+  .mandala .spin-cw  { animation: spinCW  var(--dur, 120s) linear infinite; }
+  .mandala .spin-ccw { animation: spinCCW var(--dur, 120s) linear infinite; }
+  @keyframes spinCW  { to { transform: rotate(360deg); } }
+  @keyframes spinCCW { to { transform: rotate(-360deg); } }
+  @keyframes spinSlow{ to { transform: rotate(360deg); } }
+
+  /* couple photo — centerpiece of bottom row */
+  .couple {
+    flex: 0 0 220px;
+    width: 220px; height: 380px;
+    z-index: 3;
+    align-self: flex-end;
+    object-fit: contain;
+    object-position: bottom center;
+    filter: drop-shadow(0 6px 18px rgba(0,0,0,0.45));
+  }
+  @keyframes coupleIn { to { opacity: 0.9; } }
+
+  /* text blocks */
+  .content {
+    position: absolute; inset: 0;
+    z-index: 6;
+    padding: 90px 50px 30px;
+    display: flex; flex-direction: column;
+    gap: 0;
+  }
+
+  .block {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  .block.fade {
+    animation: blockIn 1.2s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  @keyframes blockIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* wipe-in for headings */
+  .wipe {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+  }
+  .wipe > span {
+    display: inline-block;
+    clip-path: inset(0 100% 0 0);
+    animation: wipeIn 1.6s cubic-bezier(.7,.05,.2,1) forwards;
+  }
+  @keyframes wipeIn {
+    to { clip-path: inset(0 0 0 0); }
+  }
+
+  .center { text-align: center; }
+  .leftish { text-align: left; padding-right: 460px; }
+
+  .gold { color: var(--gold-bright); }
+  .gold-deep { color: var(--gold); }
+  .cream { color: var(--cream); }
+
+  /* Block 1: mantras */
+  .b1 {
+    text-align: center;
+    margin-top: 10px;
+    color: var(--gold-bright);
+    font-family: 'Tiro Devanagari Sanskrit', serif;
+    line-height: 1.55;
+    letter-spacing: 0.5px;
+  }
+  .b1 .ganesh { font-size: 44px; opacity: 0.95; margin-bottom: 8px; }
+  .b1 .mantra { font-size: 34px; opacity: 0.92; }
+  .b1 .om-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    margin-bottom: 10px;
+  }
+  .b1 .om-row .om-svg { width: 64px; height: 64px; filter: drop-shadow(0 0 14px rgba(240,207,110,0.45)); }
+  .b1 .om-row .om-line {
+    width: 140px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  /* Block 2 + 3 wrapped */
+  .b2 {
+    text-align: center;
+    margin-top: 22px;
+  }
+  .b2 .title {
+    font-family: 'Yatra One', 'Tiro Devanagari Sanskrit', serif;
+    font-size: 116px;
+    color: var(--gold-bright);
+    letter-spacing: 6px;
+    text-shadow: 0 0 24px rgba(240,207,110,0.25), 0 2px 0 rgba(0,0,0,0.4);
+    line-height: 1;
+  }
+  .b2 .swash {
+    display: flex; align-items: center; justify-content: center;
+    gap: 14px;
+    margin-top: 16px;
+  }
+  .b2 .swash .line {
+    width: 130px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .b2 .swash .dia {
+    width: 8px; height: 8px;
+    background: var(--gold-bright);
+    transform: rotate(45deg);
+    box-shadow: 0 0 8px rgba(240,207,110,0.7);
+  }
+  .b2 .swash .paisley {
+    width: 46px; height: 46px;
+    filter: drop-shadow(0 0 10px rgba(240,207,110,0.35));
+  }
+  .b2 .swash .lotus {
+    width: 58px; height: 32px;
+    filter: drop-shadow(0 0 10px rgba(240,207,110,0.4));
+  }
+
+  .b3 {
+    margin-top: 22px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    white-space: nowrap;
+  }
+  .b3 .name {
+    font-family: 'Tiro Devanagari Sanskrit', serif;
+    font-size: 60px;
+    color: var(--gold-bright);
+    font-weight: 600;
+    text-shadow: 0 0 16px rgba(240,207,110,0.20);
+    letter-spacing: 1px;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+  .b3 .ganesh-icon {
+    width: 96px; height: 96px;
+    display: grid; place-items: center;
+    flex: 0 0 auto;
+  }
+  .b3 .ganesh-icon svg { width: 100%; height: 100%; }
+
+  /* Block 4: invitation body */
+  .b4 {
+    margin-top: 24px;
+    text-align: center;
+    font-family: 'Tiro Devanagari Sanskrit', serif;
+    color: var(--cream);
+    line-height: 1.5;
+    font-size: 32px;
+    padding: 0 20px;
+  }
+  .b4 .role { color: var(--gold-bright); font-weight: 600; }
+  .b4 .person { color: var(--gold-bright); }
+  .b4 .sub {
+    display: block;
+    font-size: 26px;
+    color: rgba(255,244,220,0.85);
+    font-style: italic;
+    margin-top: 3px;
+  }
+  .b4 .gap { height: 10px; }
+  .b4 .body { margin-top: 14px; font-size: 30px; line-height: 1.5; }
+
+  /* Block 5: event details (centered) */
+  .b5 {
+    margin-top: 26px;
+    text-align: center;
+    font-family: 'Tiro Devanagari Sanskrit', serif;
+    color: var(--cream);
+    line-height: 1.45;
+  }
+  .b5 h3 {
+    font-family: 'Yatra One', 'Tiro Devanagari Sanskrit', serif;
+    color: var(--gold-bright);
+    font-size: 46px;
+    margin: 0 0 14px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 14px rgba(240,207,110,0.18);
+  }
+  .b5 .event-row { margin-bottom: 12px; }
+  .b5 .lbl {
+    color: var(--gold-bright);
+    font-weight: 600;
+    font-size: 32px;
+  }
+  .b5 .val { font-size: 30px; color: var(--cream); }
+  .b5 .place { font-size: 27px; color: rgba(255,244,220,0.90); display: block; margin-top: 2px; }
+  .b5 .contact {
+    margin-top: 10px;
+    font-size: 30px;
+  }
+  .b5 .contact .lbl { font-size: 30px; }
+
+  /* Decorative divider between events and bottom row */
+  .divider {
+    margin: 20px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    width: 70%;
+  }
+  .divider .line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .divider .dia {
+    width: 9px; height: 9px;
+    background: var(--gold-bright);
+    transform: rotate(45deg);
+    box-shadow: 0 0 8px rgba(240,207,110,0.7);
+  }
+
+  /* Bottom row: well-wishers | silhouette | inviter */
+  .bottom-row {
+    margin-top: 22px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  /* Block 6: family well-wishers (left) */
+  .b6 {
+    flex: 1 1 0;
+    font-family: 'Tiro Devanagari Sanskrit', serif;
+    color: var(--cream);
+    line-height: 1.35;
+    text-align: left;
+    max-width: 540px;
+  }
+  .b6 .hdr {
+    color: var(--gold-bright);
+    font-family: 'Yatra One', serif;
+    font-size: 36px;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .b6 .row {
+    font-size: 25px;
+    color: rgba(255,244,220,0.94);
+    margin-bottom: 5px;
+  }
+  .b6 .row .k { color: var(--gold-bright); font-weight: 600; }
+
+  /* Sanskrit blessing block (replaces empty bottom-left space) */
+  .blessing {
+    flex: 1 1 0;
+    font-family: 'Tiro Devanagari Sanskrit', serif;
+    text-align: left;
+    color: var(--cream);
+    line-height: 1.5;
+    max-width: 480px;
+  }
+  .blessing .verse {
+    font-size: 26px;
+    color: var(--gold-bright);
+    font-style: italic;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 12px rgba(240,207,110,0.18);
+  }
+  .blessing .trans {
+    margin-top: 10px;
+    font-size: 21px;
+    color: rgba(255,244,220,0.78);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    letter-spacing: 0.4px;
+  }
+  .blessing .verse-deco {
+    display: flex; align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .blessing .verse-deco .l {
+    width: 60px; height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+  .blessing .verse-deco .d {
+    width: 6px; height: 6px;
+    background: var(--gold-bright);
+    transform: rotate(45deg);
+    box-shadow: 0 0 6px rgba(240,207,110,0.7);
+  }
+
+  /* Countdown chip */
+  .countdown {
+    margin: 14px auto 0;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 10px 22px;
+    border: 1px solid rgba(212,175,55,0.55);
+    border-radius: 36px;
+    background: rgba(20,5,12,0.55);
+    box-shadow: 0 0 18px rgba(240,207,110,0.12), inset 0 0 12px rgba(240,207,110,0.06);
+    font-family: 'Tiro Devanagari Sanskrit', serif;
+  }
+  .countdown .days {
+    font-family: 'Yatra One', serif;
+    font-size: 42px;
+    color: var(--gold-bright);
+    line-height: 1;
+    text-shadow: 0 0 14px rgba(240,207,110,0.35);
+  }
+  .countdown .label {
+    font-size: 22px;
+    color: rgba(255,244,220,0.92);
+    letter-spacing: 0.5px;
+  }
+  .countdown.now .days { font-size: 28px; }
+
+  /* venue / contact links */
+  .venue-link, .tel-link {
+    color: var(--gold-bright);
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(212,175,55,0.55);
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .venue-link:hover, .tel-link:hover {
+    color: #fce29a;
+    border-bottom-color: var(--gold-bright);
+  }
+
+  /* Gold shimmer pass — sweeps over completed text blocks */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer::after {
+    content: "";
+    position: absolute;
+    top: 0; left: -150%;
+    width: 60%; height: 100%;
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      rgba(255,244,220,0) 30%,
+      rgba(255,244,220,0.18) 48%,
+      rgba(240,207,110,0.42) 50%,
+      rgba(255,244,220,0.18) 52%,
+      rgba(255,244,220,0) 70%,
+      transparent 100%
+    );
+    transform: skewX(-18deg);
+    pointer-events: none;
+    opacity: 0;
+  }
+  .shimmer.shimmer-go::after {
+    animation: shimmerSweep 2.2s cubic-bezier(.4,.1,.3,1) forwards;
+  }
+  @keyframes shimmerSweep {
+    0%   { left: -150%; opacity: 0; }
+    15%  { opacity: 1; }
+    85%  { opacity: 1; }
+    100% { left: 150%;  opacity: 0; }
+  }
+
+  /* Block 7: inviter (right) */
+  .b7 {
+    flex: 0 0 auto;
+    font-family: 'Tiro Devanagari Sanskrit', serif;
+    text-align: left;
+    min-width: 280px;
+  }
+  .b7 .hdr {
+    color: var(--gold-bright);
+    font-family: 'Yatra One', serif;
+    font-size: 36px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .b7 .name {
+    color: var(--gold-bright);
+    font-size: 30px;
+    line-height: 1.4;
+  }
+
+  /* corner filigree accents */
+  .corner {
+    position: absolute;
+    width: 240px; height: 240px;
+    pointer-events: none;
+    opacity: 0.55;
+    z-index: 4;
+  }
+  .corner.tl { top: 110px; left: 30px; }
+  .corner.tr { top: 110px; right: 30px; transform: scaleX(-1); }
+
+  /* play overlay (dismissed on click; only if autoplay blocked) */
+  .replay {
+    position: fixed;
+    right: 16px; bottom: 16px;
+    z-index: 100;
+    padding: 8px 14px;
+    border: 1px solid var(--gold);
+    background: rgba(0,0,0,0.55);
+    color: var(--gold-bright);
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    border-radius: 2px;
+    opacity: 0.7;
+  }
+  .replay:hover { opacity: 1; }
+</style>
+</head>
+<body style="background-color: rgb(76, 114, 69)">
+
+<div class="stage">
+  <div class="canvas" id="canvas">
+
+    <!-- Background atmospherics -->
+    <div class="grain"></div>
+
+    <!-- Ghost mandala in center-back -->
+    <div class="ghost" id="ghost"></div>
+
+    <!-- Main mandala bottom-right -->
+    <div class="mandala" id="mandala"></div>
+
+    <!-- Corner filigree (top corners under the border) -->
+    <svg class="corner tl" viewBox="0 0 240 240" id="cornerTL"></svg>
+    <svg class="corner tr" viewBox="0 0 240 240" id="cornerTR"></svg>
+
+    <!-- Top panning border -->
+    <div class="topborder">
+      <svg viewBox="0 0 4800 120" preserveAspectRatio="none" id="topborder"></svg>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Block 1: Mantras -->
+      <div class="b1 block" style="animation-delay: 1.0s; font-size: 30px" data-fade>
+        <div class="om-row">
+          <span class="om-line"></span>
+          <svg class="om-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <radialGradient id="omGrad" cx="50%" cy="50%" r="60%">
+                <stop offset="0%" stop-color="#fce29a"/>
+                <stop offset="60%" stop-color="#f0cf6e"/>
+                <stop offset="100%" stop-color="#c89a3a"/>
+              </radialGradient>
+            </defs>
+            <!-- crescent + bindu -->
+            <path d="M 14 14 Q 32 4 50 14" fill="none" stroke="url(#omGrad)" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="32" cy="9" r="2.4" fill="url(#omGrad)"/>
+            <!-- stylised ॐ glyph (Devanagari Om) -->
+            <text x="32" y="50" font-family="'Tiro Devanagari Sanskrit', serif" font-size="44" font-weight="600" text-anchor="middle" fill="url(#omGrad)">ॐ</text>
+          </svg>
+          <span class="om-line"></span>
+        </div>
+        <div class="ganesh" style="font-size: 30px">श्री गणेशाय नमः</div>
+        <div class="mantra" style="font-size: 30px">मंगलम् भगवान् विष्णुः मंगलम् गरुडध्वजः ।</div>
+        <div class="mantra" style="font-size: 30px">मंगलम् पुण्डरीकाक्षः मंगलाय तनोहरिः ।।</div>
+      </div>
+
+      <!-- Block 2: Main Title -->
+      <div class="b2 block" style="animation-delay:2.2s" data-fade>
+        <div class="title">शुभ विवाह</div>
+        <div class="swash">
+          <span class="line"></span>
+          <!-- left paisley (mirrored) -->
+          <svg class="paisley" viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg" style="transform: scaleX(-1);" aria-hidden="true">
+            <defs>
+              <linearGradient id="paisGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#fce29a"/>
+                <stop offset="100%" stop-color="#c89a3a"/>
+              </linearGradient>
+            </defs>
+            <path d="M 6 38 C 6 14, 28 6, 38 18 C 44 26, 36 36, 28 32 C 22 30, 22 22, 28 20"
+              fill="none" stroke="url(#paisGrad)" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="14" cy="30" r="1.6" fill="url(#paisGrad)"/>
+            <circle cx="20" cy="22" r="1.2" fill="url(#paisGrad)" opacity="0.85"/>
+          </svg>
+          <!-- center lotus -->
+          <svg class="lotus" viewBox="0 0 58 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="lotusGrad" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0%" stop-color="#8a6018"/>
+                <stop offset="60%" stop-color="#f0cf6e"/>
+                <stop offset="100%" stop-color="#fce29a"/>
+              </linearGradient>
+            </defs>
+            <!-- outer petals -->
+            <path d="M 29 30 Q 4 22 8 6 Q 18 14 29 30 Z" fill="url(#lotusGrad)" opacity="0.85"/>
+            <path d="M 29 30 Q 54 22 50 6 Q 40 14 29 30 Z" fill="url(#lotusGrad)" opacity="0.85"/>
+            <!-- middle petals -->
+            <path d="M 29 30 Q 14 18 18 2 Q 26 12 29 30 Z" fill="url(#lotusGrad)" opacity="0.95"/>
+            <path d="M 29 30 Q 44 18 40 2 Q 32 12 29 30 Z" fill="url(#lotusGrad)" opacity="0.95"/>
+            <!-- center petal -->
+            <path d="M 29 30 Q 25 14 29 0 Q 33 14 29 30 Z" fill="url(#lotusGrad)"/>
+            <circle cx="29" cy="30" r="1.8" fill="#fce29a"/>
+          </svg>
+          <!-- right paisley -->
+          <svg class="paisley" viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M 6 38 C 6 14, 28 6, 38 18 C 44 26, 36 36, 28 32 C 22 30, 22 22, 28 20"
+              fill="none" stroke="url(#paisGrad)" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="14" cy="30" r="1.6" fill="url(#paisGrad)"/>
+            <circle cx="20" cy="22" r="1.2" fill="url(#paisGrad)" opacity="0.85"/>
+          </svg>
+          <span class="line"></span>
+        </div>
+      </div>
+
+      <!-- Block 3: Couple Names (bride first on bride's side) -->
+      <div class="b3 block" style="animation-delay:3.2s" data-fade>
+        <div class="name" style="font-size: 70px">निहारिका भट्टराई</div>
+        <div class="ganesh-icon" id="ganeshIcon"></div>
+        <div class="name" style="font-size: 70px">सुजन आचार्य</div>
+      </div>
+
+      <!-- Block 4: Invitation body (bride's side — bride first) -->
+      <div class="b4 block" style="animation-delay:4.4s" data-fade>
+        <div style="font-size: 34px;">हाम्री सुपुत्री</div>
+        <div class="gap"></div>
+        <div>
+          <span class="role" style="font-size: 34px">वधु:</span>
+          <span class="person" style="font-size: 34px">सु. निहारिका भट्टराई</span>
+          <span class="sub" style="font-size: 28px">(सुपुत्रीः श्री लक्ष्मी प्रसाद भट्टराई एवम् श्रीमती झल्का देवी भट्टराई, सूर्यविनायक, भक्तपुर)</span>
+        </div>
+        <div class="gap"></div>
+        <div style="margin-top:4px;">को शुभविवाह</div>
+        <div class="gap"></div>
+        <div>
+          <span class="role" style="font-size: 34px">वर:</span>
+          <span class="person" style="font-size: 34px">चि. श्री सुजन आचार्य</span>
+          <span class="sub" style="font-size: 28px">(सुपुत्रः श्री ध्रुव प्रसाद आचार्य एवम् श्रीमती मल्लिका आचार्य, सूर्यविनायक, भक्तपुर)</span>
+        </div>
+        <div class="body" style="font-size: 35px">
+          सँग सु-सम्पन्न हुने भएकोले उक्त सुखद उपलक्ष्यमा उपस्थित भई वधु-वरलाई आशिर्वाद प्रदान गरिदिनुहुन यहाँको गरिमामय उपस्थितिका लागि हार्दिक आमन्त्रण गर्दछौं ।
+        </div>
+      </div>
+
+      <!-- Block 5: Event Details -->
+      <div class="b5 block" style="animation-delay:6.0s" data-fade>
+        <h3>वैवाहिक कार्यक्रम</h3>
+        <div class="event-row">
+          <div><span class="lbl" style="font-size: 42px">शुभ विवाह:</span> <span class="val" style="font-size: 34px">२०८३ असार २३ गते (July 7, 2026)</span></div>
+          <span class="place" style="font-size: 31px">समय: बिहान ११ बजे</span>
+          <span class="place" style="font-size: 31px">
+            स्थान:
+            <a class="venue-link" href="https://www.google.com/maps/search/?api=1&query=Royal+Thai+Banquet+Radhe+Radhe+Bhaktapur" target="_blank" rel="noopener">रोयल थाई ब्यांक्वेट, राधे राधे, भक्तपुर</a>
+          </span>
+        </div>
+        <div class="contact"><span class="lbl" style="font-size: 32px">सम्पर्क:</span> <span class="val" style="font-size: 31px"><a class="tel-link" href="tel:+9779849389838">९८४९३८९८३८</a></span></div>
+        <div class="countdown" id="countdown" aria-live="polite">
+          <span class="days" id="countdownDays">—</span>
+          <span class="label" id="countdownLabel">दिन बाँकी शुभ विवाहसम्म</span>
+        </div>
+      </div>
+
+      <!-- Decorative divider -->
+      <div class="divider block" style="animation-delay:7.0s" data-fade>
+        <span class="line"></span>
+        <span class="dia"></span>
+        <span class="line"></span>
+      </div>
+
+      <!-- Bottom row: blessing | inviter | silhouette -->
+      <div class="bottom-row">
+        <div class="blessing block" style="animation-delay: 7.8s" data-fade>
+          <div class="verse-deco">
+            <span class="l"></span>
+            <span class="d"></span>
+          </div>
+          <div class="verse">
+            पाणिग्रहण-सम्बन्धोऽयं<br>
+            जन्म-जन्मान्तरेऽपि च ।
+          </div>
+          <div class="trans">
+            "May this sacred bond of union endure<br>
+            through this life and lives beyond."
+          </div>
+        </div>
+
+        <div class="b7 block" style="animation-delay:9.0s" data-fade>
+          <div class="hdr" style="text-align: left; font-size: 38px">प्रार्थी:</div>
+          <div class="name" style="text-align: left; font-size: 34px">श्री लक्ष्मी प्रसाद भट्टराई</div>
+          <div class="name" style="text-align: left; font-size: 34px">श्रीमती झल्का देवी भट्टराई</div>
+          <div class="name" style="text-align: left; font-size: 28px; font-style: italic; margin-top: 6px;">(एवं समस्त भट्टराई परिवार)</div>
+        </div>
+
+        <img class="couple block" src="couple.png" alt="Bride and Groom" style="animation-delay: 8.4s; opacity: 0; object-fit: fill; width: 220px" data-fade>
+      </div>
+    </div>
+
+    <div class="vignette"></div>
+  </div>
+</div>
+
+<button class="replay" id="replay">REPLAY</button>
+
+<script src="mandala.js"></script>
+<script>
+  /* ============================================================
+     Fit 1080x1920 canvas to viewport
+     ============================================================ */
+  function fit() {
+    const c = document.getElementById('canvas');
+    const sx = window.innerWidth  / 1080;
+    const sy = window.innerHeight / 1920;
+    const s  = Math.min(sx, sy);
+    const w  = 1080 * s;
+    const h  = 1920 * s;
+    c.style.transform = `translate(${-w/2}px, ${-h/2}px) scale(${s})`;
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  /* ============================================================
+     Build SVGs
+     ============================================================ */
+  document.getElementById('mandala').innerHTML = buildMandala();
+  document.getElementById('ghost').innerHTML   = buildGhostMandala();
+  document.getElementById('topborder').innerHTML = buildTopBorder(4800, 120);
+  document.getElementById('ganeshIcon').innerHTML = buildGanesh();
+  document.getElementById('cornerTL').innerHTML = buildCorner();
+  document.getElementById('cornerTR').innerHTML = buildCorner();
+
+  /* ============================================================
+     Countdown to July 7, 2026 — rendered in Devanagari digits
+     ============================================================ */
+  function toDevanagariDigits(n) {
+    const map = ['०','१','२','३','४','५','६','७','८','९'];
+    return String(n).split('').map(c => /\d/.test(c) ? map[+c] : c).join('');
+  }
+  function updateCountdown() {
+    const target = new Date('2026-07-07T11:00:00+05:45'); // Nepal time
+    const now    = new Date();
+    const diffMs = target - now;
+    const daysEl  = document.getElementById('countdownDays');
+    const labelEl = document.getElementById('countdownLabel');
+    const wrapEl  = document.getElementById('countdown');
+    if (!daysEl) return;
+
+    if (diffMs <= 0) {
+      // wedding day or after
+      wrapEl.classList.add('now');
+      daysEl.textContent = '🌸';
+      labelEl.textContent = 'आज शुभ विवाहको दिन — Today is the day';
+      return;
+    }
+    const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    daysEl.textContent = toDevanagariDigits(days);
+    labelEl.textContent = (days === 1)
+      ? 'दिन बाँकी — 1 day to go'
+      : `दिन बाँकी — ${days} days to शुभ विवाह`;
+  }
+  updateCountdown();
+  // refresh once an hour in case the page is left open
+  setInterval(updateCountdown, 60 * 60 * 1000);
+
+  /* ============================================================
+     Gold-shimmer pass — sweeps over each text block shortly
+     after its fade-in completes
+     ============================================================ */
+  const SHIMMER_TARGETS = [
+    { sel: '.b2 .title',          delay: 2200 + 1400 },   // main title
+    { sel: '.b3',                 delay: 3200 + 1400 },   // couple names
+    { sel: '.b5 h3',              delay: 6000 + 1400 },   // event heading
+    { sel: '.blessing .verse',    delay: 7800 + 1400 },   // blessing verse
+    { sel: '.b7 .hdr',            delay: 9000 + 1400 },   // prarthi heading
+  ];
+  function triggerShimmer() {
+    SHIMMER_TARGETS.forEach(({ sel, delay }) => {
+      document.querySelectorAll(sel).forEach(el => {
+        el.classList.add('shimmer');
+        el.classList.remove('shimmer-go');
+        setTimeout(() => {
+          // force reflow so the animation can restart on replay
+          void el.offsetWidth;
+          el.classList.add('shimmer-go');
+        }, delay);
+      });
+    });
+  }
+
+  /* ============================================================
+     Sequencing — start fades
+     ============================================================ */
+  function start() {
+    document.querySelectorAll('[data-fade]').forEach(el => {
+      el.classList.remove('fade');
+      // force reflow
+      void el.offsetWidth;
+      el.classList.add('fade');
+    });
+    triggerShimmer();
+  }
+  start();
+
+  document.getElementById('replay').addEventListener('click', () => {
+    // restart by re-applying class
+    document.querySelectorAll('[data-fade]').forEach(el => {
+      el.classList.remove('fade');
+    });
+    document.querySelectorAll('.shimmer').forEach(el => {
+      el.classList.remove('shimmer-go');
+    });
+    requestAnimationFrame(() => requestAnimationFrame(start));
+  });
+</script>
+</body>
+</html>
